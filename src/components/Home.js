@@ -2,13 +2,20 @@ import React, {useEffect} from 'react';
 import blogImage from "../images/blog.jpg";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
-import {get_listAllPosts} from "../redux/actions/postAction";
+import {del_deletePost, get_listAllPosts, get_onePost} from "../redux/actions/postAction";
 
-function Home({posts, get_listAllPosts}) {
+function Home({posts, get_listAllPosts, del_deletePost, get_onePost, history}) {
 
     useEffect(() => {
         get_listAllPosts()
     }, [get_listAllPosts]);
+
+    function handleDeletePost(id) {
+        const remove = window.confirm("Are you sure delete the post: " + id);
+        if(remove) {
+            del_deletePost(id)
+        }
+    }
 
     return (
         <main role="main">
@@ -33,14 +40,27 @@ function Home({posts, get_listAllPosts}) {
                                                 <p className="card-text">{post.body}</p>
                                                 <div className="d-flex justify-content-between align-items-center">
                                                     <div className="btn-group">
-                                                        <button type="button" className="btn btn-sm btn-outline-success">View
+                                                        <button
+                                                            type="button"
+                                                            className="btn btn-sm btn-outline-success"
+                                                            onClick={() => history.push(`/post/${post.id}`)}
+                                                        >View
                                                         </button>
-                                                        <button type="button" className="btn btn-sm btn-outline-primary">Edit
+                                                        <button
+                                                            type="button"
+                                                            className="btn btn-sm btn-outline-primary"
+                                                            onClick={() => history.push(`/edit/${post.id}`)}
+                                                        >
+                                                            Edit
                                                         </button>
-                                                        <button type="button" className="btn btn-sm btn-outline-danger">Delete
+                                                        <button
+                                                            type="button"
+                                                            className="btn btn-sm btn-outline-danger"
+                                                            onClick={() => handleDeletePost(post.id)}
+                                                        >
+                                                            Delete
                                                         </button>
                                                     </div>
-                                                    <small className="text-muted">9 mins</small>
                                                 </div>
                                             </div>
                                         </div>
@@ -64,7 +84,10 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        get_listAllPosts: bindActionCreators(get_listAllPosts, dispatch)
+        get_listAllPosts: bindActionCreators(get_listAllPosts, dispatch),
+        del_deletePost: bindActionCreators(del_deletePost, dispatch),
+        get_onePost: bindActionCreators(get_onePost, dispatch),
+
     }
 }
 

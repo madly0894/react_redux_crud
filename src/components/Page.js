@@ -1,13 +1,17 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {connect} from "react-redux";
+import {useParams} from "react-router-dom";
 import {bindActionCreators} from "redux";
-import {post_createPost} from "../redux/actions/postAction";
+import {post_createPost, put_updatePost} from "../redux/actions/postAction";
 
-function Page({post_createPost, history}) {
+function Page({post_createPost, put_updatePost, history, location}) {
+
+    const {id} = useParams();
 
     const [state, setState] = useState({
         title: "",
-        body: ""
+        body: "",
+        disabled: true
     });
 
     function handleChange(val, key) {
@@ -17,15 +21,40 @@ function Page({post_createPost, history}) {
         });
     }
 
+    let repl = state.body && state.title;
+    
+    repl.replace(/^\s+|\s+$|\s+(?=\s)/g, "");
+
     function handleCreatePost() {
-        post_createPost(state.title, state.body);
-        history.push("/");
+        if(location.pathname === "/create") {
+            post_createPost(state.title, state.body);
+            history.push("/");
+        } else {
+            put_updatePost(state.title, state.body, id);
+            history.push("/");
+        }
     }
+
+    useEffect(() => {
+        if(repl) {
+            setState(state => ({
+                ...state,
+                disabled: false
+            }));
+        } else {
+            setState(state => ({
+                ...state,
+                disabled: true
+            }));
+        }
+    }, [repl]);
 
     return (
         <div className="container vh-100 d-flex align-items-center">
             <form className="form-page text-center">
-                <h1 className="h3 mb-3 font-weight-normal">Create post</h1>
+                <h1 className="h3 mb-3 font-weight-normal">
+                    {location.pathname === "/create" ? "Create post" : "Update post: " + id}
+                </h1>
                 <div className="form-group">
                     <label htmlFor="exampleInputEmail1">Title</label>
                     <input
@@ -49,8 +78,9 @@ function Page({post_createPost, history}) {
                     type="button"
                     className="btn btn-primary"
                     onClick={handleCreatePost}
+                    disabled={state.disabled}
                 >
-                    Create Post
+                    {location.pathname === "/create" ? "Create post" : "Update post"}
                 </button>
             </form>
         </div>
@@ -59,7 +89,8 @@ function Page({post_createPost, history}) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        post_createPost: bindActionCreators(post_createPost, dispatch)
+        post_createPost: bindActionCreators(post_createPost, dispatch),
+        put_updatePost: bindActionCreators(put_updatePost, dispatch),
     }
 }
 

@@ -6,15 +6,14 @@ import Page from "./components/Page";
 import {Route, Switch} from "react-router-dom";
 
 function App() {
-
     return (
         <div className="App">
             <Navbar/>
             <Switch>
                 <Route exact path="/" component={Home}/>
                 <Route exact path="/create" component={Page}/>
-                <Route exact path="/edit" component={Page}/>
-                <Route exact path="/post:id" component={Post}/>
+                <Route exact path="/edit/:id" component={Page}/>
+                <Route exact path="/post/:id" component={Post}/>
             </Switch>
         </div>
     );
