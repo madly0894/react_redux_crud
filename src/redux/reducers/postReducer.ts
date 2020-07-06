@@ -1,8 +1,15 @@
 import * as type from "../types";
+import {PostsType, PostType} from "../../types/types";
+import {ActionTypes} from "../actions/postAction";
 
-const initialState = null;
+const initialState = {
+    posts: [] as PostsType,
+    post: {} as PostType
+};
 
-export default function (state = initialState, action) {
+type InitialStateType = typeof initialState;
+
+export default function (state = initialState, action: ActionTypes): InitialStateType {
     switch (action.type) {
         case type.GET_POSTS:
             return {
