@@ -4,24 +4,25 @@ import {connect} from "react-redux";
 import {del_deletePost, get_listAllPosts} from "../redux/actions/postAction";
 import {AppStateType} from "../redux/reducers/rootReducers";
 import {PostsType} from "../types/types";
-import { History, LocationState } from "history";
+import * as H from "history";
+import {getPosts} from "../redux/selectors";
 
 declare var confirm: (question: string) => boolean;
 
-type MapStatePropsType = {
+type MapStateToPropsType = {
     posts: PostsType
 }
 
-type MapDispatchPropsType = {
+type MapDispatchToPropsType = {
     get_listAllPosts: () => void,
     del_deletePost: (id: number) => void
 }
 
 type OwnPropsType = {
-    history: History<LocationState>
+    history: H.History
 }
 
-type PropsType = MapStatePropsType & MapDispatchPropsType & OwnPropsType;
+type PropsType = MapStateToPropsType & MapDispatchToPropsType & OwnPropsType;
 
 const Home: React.FC<PropsType> = ({posts, get_listAllPosts, del_deletePost, history}) => {
 
@@ -95,10 +96,10 @@ const Home: React.FC<PropsType> = ({posts, get_listAllPosts, del_deletePost, his
     );
 };
 
-const mapStateToProps = (state: AppStateType): MapStatePropsType => {
+const mapStateToProps = (state: AppStateType): MapStateToPropsType => {
     return {
-        posts: state.data && state.data.posts
+        posts: getPosts(state)
     }
 };
 
-export default connect<MapStatePropsType, MapDispatchPropsType, OwnPropsType, AppStateType>(mapStateToProps, {get_listAllPosts, del_deletePost})(Home);
+export default connect<MapStateToPropsType, MapDispatchToPropsType, OwnPropsType, AppStateType>(mapStateToProps, {get_listAllPosts, del_deletePost})(Home);

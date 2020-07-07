@@ -1,39 +1,64 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from "react-redux";
 import {useParams} from "react-router-dom";
-import {bindActionCreators} from "redux";
 import {post_createPost, put_updatePost} from "../redux/actions/postAction";
+import * as H from "history";
+import {AppStateType} from "../redux/reducers/rootReducers";
 
-function Page({post_createPost, put_updatePost, history, location}) {
+type MapStateToPropsType = {
 
-    const {id} = useParams();
+}
 
-    const [state, setState] = useState({
-        title: "",
-        body: "",
-        disabled: true
-    });
+type MapDispatchToProps = {
+    post_createPost: (title: string, body: string) => void
+    put_updatePost: (title: string, body: string, id: number) => void
+}
 
-    function handleChange(val, key) {
-        setState({
-            ...state,
-            [key]: val
-        });
+type OwnPropsType = {
+    history: H.History
+    location: H.Location
+}
+
+type PropsType = MapStateToPropsType & MapDispatchToProps & OwnPropsType;
+
+const Page: React.FC<PropsType> = ({post_createPost, put_updatePost, history, location}) => {
+
+    type ParamType = {
+        id: string
     }
 
-    let repl = state.body && state.title;
-    
-    repl.replace(/^\s+|\s+$|\s+(?=\s)/g, "");
+    const {id} = useParams<ParamType>();
 
-    function handleCreatePost() {
+    const initialState = {
+        title: "" as string,
+        body: "" as string,
+        disabled: true as boolean
+    };
+
+    type InitialGlobalStateType = typeof initialState;
+
+    const [state, setState] = useState<InitialGlobalStateType>(initialState);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, key: string) => {
+        setState({
+            ...state,
+            [key]: e.target.value
+        });
+    };
+
+    const handleCreatePost = () => {
         if(location.pathname === "/create") {
             post_createPost(state.title, state.body);
             history.push("/");
         } else {
-            put_updatePost(state.title, state.body, id);
+            put_updatePost(state.title, state.body, +id);
             history.push("/");
         }
-    }
+    };
+
+    let repl = state.body && state.title;
+
+    repl.replace(/^\s+|\s+$|\s+(?=\s)/g, "");
 
     useEffect(() => {
         if(repl) {
@@ -62,16 +87,16 @@ function Page({post_createPost, put_updatePost, history, location}) {
                         className="form-control"
                         id="exampleInputEmail1"
                         aria-describedby="emailHelp"
-                        onChange={(e) => handleChange(e.target.value, "title")}
+                        onChange={(e) => handleChange(e, "title")}
                     />
                 </div>
                 <div className="form-group">
                     <label htmlFor="exampleInputPassword1">Body</label>
                     <textarea
-                        rows="3"
+                        rows={3}
                         className="form-control"
                         id="exampleInputPassword1"
-                        onChange={(e) => handleChange(e.target.value, "body")}
+                        onChange={(e) => handleChange(e, "body")}
                     />
                 </div>
                 <button
@@ -85,13 +110,6 @@ function Page({post_createPost, put_updatePost, history, location}) {
             </form>
         </div>
     );
-}
+};
 
-function mapDispatchToProps(dispatch) {
-    return {
-        post_createPost: bindActionCreators(post_createPost, dispatch),
-        put_updatePost: bindActionCreators(put_updatePost, dispatch),
-    }
-}
-
-export default connect(null, mapDispatchToProps)(Page);
+export default connect<MapStateToPropsType, MapDispatchToProps, OwnPropsType, AppStateType>(null, {post_createPost, put_updatePost})(Page);

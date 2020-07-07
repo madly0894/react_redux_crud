@@ -2,17 +2,24 @@ import axios from "axios";
 import {API} from "../../constants";
 import * as type from "../types";
 import {CommentType, CommonType, PostsType, PostType} from "../../types/types";
+import {ThunkAction} from "redux-thunk";
+import {AppStateType} from "../reducers/rootReducers";
+// import {Dispatch} from "redux";
 
-function error() {
+const error = () => {
     return new Error("Error from server");
-}
+};
 
 export type ActionTypes = GetPostsType | AddNewPostType | UpdatePostType |
     DeletePostType | GetOnePostType | CreateCommentType;
 
+// type DispatchType = Dispatch<ActionTypes>
+
+type ThunkType = ThunkAction<Promise<void>, AppStateType, unknown, ActionTypes>;
+
 // GET List all posts
 
-export const get_listAllPosts = () => async (dispatch: any) => {
+export const get_listAllPosts = (): ThunkType => async (dispatch) => {
     try {
         const res = await axios.get(API._get)
             .then(res => res.data);
@@ -35,7 +42,7 @@ export const dispatchListAllPosts = (posts: PostsType): GetPostsType => ({
 
 // POST Create a post
 
-export const post_createPost = (title: string, body: string) => async (dispatch: any) => {
+export const post_createPost = (title: string, body: string): ThunkType => async (dispatch) => {
     try {
         const res = await axios.post(API._get,
             {
@@ -61,7 +68,7 @@ export const dispatchCreatePost = (addPost: CommonType): AddNewPostType => ({
 
 // PUT Update a post
 
-export const put_updatePost = (title: string, body: string, id: number) => async (dispatch: any) => {
+export const put_updatePost = (title: string, body: string, id: number): ThunkType => async (dispatch) => {
     try {
         const res = await axios.put(`${API._get}/${id}`,
             {
@@ -87,7 +94,7 @@ export const dispatchUpdatePost = (updatePost: CommonType): UpdatePostType => ({
 
 // DEL Delete a post
 
-export const del_deletePost = (id: number) => async (dispatch: any) => {
+export const del_deletePost = (id: number): ThunkType => async (dispatch) => {
     try {
         await axios.delete(`${API._get}/${id}`);
 
@@ -109,7 +116,7 @@ export const dispatchDeletePost = (id: number): DeletePostType => ({
 
 // GET Retrieve a post
 
-export const get_onePost = (id: number) => async (dispatch: any) => {
+export const get_onePost = (id: number): ThunkType => async (dispatch) => {
     try {
         const res = await axios.get(`${API._get}/${id}?_embed=comments`)
             .then(res => res.data);
@@ -132,7 +139,7 @@ export const dispatchOnePost = (onePost: PostType): GetOnePostType => ({
 
 // POST Create a comment
 
-export const post_createComment = (id: number, body: string) => async (dispatch: any) => {
+export const post_createComment = (id: number, body: string): ThunkType => async (dispatch) => {
 
     const postId = Number(id);
 

@@ -1,7 +1,11 @@
 import React from 'react';
 import {NavLink} from "react-router-dom";
 
-function Navbar(props) {
+type PropsType = {
+
+}
+
+const Navbar: React.FC<PropsType> = (props) => {
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
             <NavLink to="/" className="navbar-brand">Blog</NavLink>
@@ -21,6 +25,6 @@ function Navbar(props) {
             </div>
         </nav>
     );
-}
+};
 
 export default Navbar;

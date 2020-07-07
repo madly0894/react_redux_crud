@@ -5,7 +5,7 @@ import Post from "./components/Post";
 import Page from "./components/Page";
 import {Route, Switch} from "react-router-dom";
 
-function App() {
+const App: React.FC = () => {
     return (
         <div className="App">
             <Navbar/>
@@ -17,6 +17,6 @@ function App() {
             </Switch>
         </div>
     );
-}
+};
 
 export default App;
