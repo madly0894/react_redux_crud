@@ -6,7 +6,7 @@ import {ThunkAction} from "redux-thunk";
 import {AppStateType} from "../reducers/rootReducers";
 // import {Dispatch} from "redux";
 
-const error = () => {
+const error = (): object => {
     return new Error("Error from server");
 };
 
@@ -21,8 +21,8 @@ type ThunkType = ThunkAction<Promise<void>, AppStateType, unknown, ActionTypes>;
 
 export const get_listAllPosts = (): ThunkType => async (dispatch) => {
     try {
-        const res = await axios.get(API._get)
-            .then(res => res.data);
+        const res = await axios.get<PostsType>(API._get)
+            .then((res) => res.data);
 
         dispatch(dispatchListAllPosts(res));
     } catch (e) {
@@ -44,7 +44,7 @@ export const dispatchListAllPosts = (posts: PostsType): GetPostsType => ({
 
 export const post_createPost = (title: string, body: string): ThunkType => async (dispatch) => {
     try {
-        const res = await axios.post(API._get,
+        const res = await axios.post<CommonType>(API._get,
             {
                 title: title,
                 body: body
@@ -70,7 +70,7 @@ export const dispatchCreatePost = (addPost: CommonType): AddNewPostType => ({
 
 export const put_updatePost = (title: string, body: string, id: number): ThunkType => async (dispatch) => {
     try {
-        const res = await axios.put(`${API._get}/${id}`,
+        const res = await axios.put<CommonType>(`${API._get}/${id}`,
             {
                 title: title,
                 body: body
@@ -118,7 +118,7 @@ export const dispatchDeletePost = (id: number): DeletePostType => ({
 
 export const get_onePost = (id: number): ThunkType => async (dispatch) => {
     try {
-        const res = await axios.get(`${API._get}/${id}?_embed=comments`)
+        const res = await axios.get<PostType>(`${API._get}/${id}?_embed=comments`)
             .then(res => res.data);
 
         dispatch(dispatchOnePost(res));
@@ -140,13 +140,10 @@ export const dispatchOnePost = (onePost: PostType): GetOnePostType => ({
 // POST Create a comment
 
 export const post_createComment = (id: number, body: string): ThunkType => async (dispatch) => {
-
-    const postId = Number(id);
-
     try {
-        const res = await axios.post(API._post,
+        const res = await axios.post<CommentType>(API._post,
             {
-                postId: postId,
+                postId: id,
                 body: body
             })
             .then(res => res.data);
