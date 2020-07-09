@@ -2,7 +2,6 @@ export type PostsType = {
     id: number,
     title: string | null,
     body: string | null,
-    date?: Date | null
 }[];
 
 export type CommentType = {

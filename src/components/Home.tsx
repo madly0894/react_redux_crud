@@ -1,4 +1,4 @@
-import React, {memo, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import blogImage from "../images/blog.jpg";
 import {connect} from "react-redux";
 import {del_deletePost, get_listAllPosts} from "../redux/actions/postAction";

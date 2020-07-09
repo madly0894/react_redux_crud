@@ -1,4 +1,3 @@
-import * as type from "../types";
 import {PostsType, PostType} from "../../types/types";
 import {ActionTypes} from "../actions/postAction";
 
@@ -11,37 +10,38 @@ type InitialStateType = typeof initialState;
 
 export default function (state = initialState, action: ActionTypes): InitialStateType {
     switch (action.type) {
-        case type.GET_POSTS:
+        case "GET_POSTS":
             return {
                 ...state,
                 posts: action.posts
             };
-        case type.ADD_POST:
+        case "ADD_POST":
             return {
                 ...state,
                 // posts: state.posts.concat(action.post)
                 posts: [...state.posts, action.addPost]
             };
-        case type.UPDATE_POST:
-            const editPost = state.posts.map(post => post.id === action.updatePost.id ? {...post, ...action.updatePost} : post);
+        case "UPDATE_POST":
+            const editPost = state.posts.map(post => post.id === action.updatePost.id ?
+                {...post, ...action.updatePost} : post);
 
             return {
                 ...state,
                 posts: editPost
             };
-        case type.DELETE_POST:
+        case "DELETE_POST":
             const newPosts = state.posts.filter(post => post.id !== action.id);
 
             return {
                 ...state,
                 posts: newPosts
             };
-        case type.ONE_POST:
+        case "ONE_POST":
             return {
                 ...state,
                 post: action.onePost
             };
-        case type.NEW_COMMENT:
+        case "NEW_COMMENT":
             return {
                 ...state,
                 post: {

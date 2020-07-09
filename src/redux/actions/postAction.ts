@@ -1,17 +1,20 @@
 import axios from "axios";
 import {API} from "../../constants";
-import * as type from "../types";
-import {CommentType, CommonType, PostsType, PostType} from "../../types/types";
+import {
+    CommentType,
+    CommonType,
+    PostsType,
+    PostType
+} from "../../types/types";
 import {ThunkAction} from "redux-thunk";
-import {AppStateType} from "../reducers/rootReducers";
+import {AppStateType, InferActionTypes} from "../reducers/rootReducers";
 // import {Dispatch} from "redux";
 
 const error = (): object => {
     return new Error("Error from server");
 };
 
-export type ActionTypes = GetPostsType | AddNewPostType | UpdatePostType |
-    DeletePostType | GetOnePostType | CreateCommentType;
+export type ActionTypes = InferActionTypes<typeof actions>;
 
 // type DispatchType = Dispatch<ActionTypes>
 
@@ -24,21 +27,11 @@ export const get_listAllPosts = (): ThunkType => async (dispatch) => {
         const res = await axios.get<PostsType>(API._get)
             .then((res) => res.data);
 
-        dispatch(dispatchListAllPosts(res));
+        dispatch(actions.dispatchListAllPosts(res));
     } catch (e) {
         error()
     }
 };
-
-type GetPostsType = {
-    type: typeof type.GET_POSTS,
-    posts: PostsType
-}
-
-export const dispatchListAllPosts = (posts: PostsType): GetPostsType => ({
-    type: type.GET_POSTS,
-    posts
-});
 
 // POST Create a post
 
@@ -50,21 +43,11 @@ export const post_createPost = (title: string, body: string): ThunkType => async
                 body: body
             }).then(res => res.data);
 
-        dispatch(dispatchCreatePost(res));
+        dispatch(actions.dispatchCreatePost(res));
     } catch (e) {
         error()
     }
 };
-
-type AddNewPostType = {
-    type: typeof type.ADD_POST,
-    addPost: CommonType
-}
-
-export const dispatchCreatePost = (addPost: CommonType): AddNewPostType => ({
-    type: type.ADD_POST,
-    addPost
-});
 
 // PUT Update a post
 
@@ -76,21 +59,11 @@ export const put_updatePost = (title: string, body: string, id: number): ThunkTy
                 body: body
             }).then(res => res.data);
 
-        dispatch(dispatchUpdatePost(res));
+        dispatch(actions.dispatchUpdatePost(res));
     } catch (e) {
         error()
     }
 };
-
-type UpdatePostType = {
-    type: typeof type.UPDATE_POST,
-    updatePost: CommonType
-}
-
-export const dispatchUpdatePost = (updatePost: CommonType): UpdatePostType => ({
-    type: type.UPDATE_POST,
-    updatePost
-});
 
 // DEL Delete a post
 
@@ -98,21 +71,11 @@ export const del_deletePost = (id: number): ThunkType => async (dispatch) => {
     try {
         await axios.delete(`${API._get}/${id}`);
 
-        dispatch(dispatchDeletePost(id));
+        dispatch(actions.dispatchDeletePost(id));
     } catch (e) {
         error()
     }
 };
-
-type DeletePostType = {
-    type: typeof type.DELETE_POST,
-    id: number
-}
-
-export const dispatchDeletePost = (id: number): DeletePostType => ({
-    type: type.DELETE_POST,
-    id
-});
 
 // GET Retrieve a post
 
@@ -121,21 +84,11 @@ export const get_onePost = (id: number): ThunkType => async (dispatch) => {
         const res = await axios.get<PostType>(`${API._get}/${id}?_embed=comments`)
             .then(res => res.data);
 
-        dispatch(dispatchOnePost(res));
+        dispatch(actions.dispatchOnePost(res));
     } catch (e) {
         error()
     }
 };
-
-type GetOnePostType = {
-    type: typeof type.ONE_POST,
-    onePost: PostType
-}
-
-export const dispatchOnePost = (onePost: PostType): GetOnePostType => ({
-    type: type.ONE_POST,
-    onePost
-});
 
 // POST Create a comment
 
@@ -148,18 +101,35 @@ export const post_createComment = (id: number, body: string): ThunkType => async
             })
             .then(res => res.data);
 
-        dispatch(dispatchCreateComment(res));
+        dispatch(actions.dispatchCreateComment(res));
     } catch (e) {
         error()
     }
 };
 
-type CreateCommentType = {
-    type: typeof type.NEW_COMMENT,
-    newComment: CommentType
-}
-
-export const dispatchCreateComment = (newComment: CommentType): CreateCommentType => ({
-    type: type.NEW_COMMENT,
-    newComment
-});
+export const actions = {
+    dispatchListAllPosts: (posts: PostsType) => ({
+        type: "GET_POSTS",
+        posts
+    } as const),
+    dispatchUpdatePost: (updatePost: CommonType) => ({
+        type: "UPDATE_POST",
+        updatePost
+    } as const),
+    dispatchCreatePost: (addPost: CommonType) => ({
+        type: "ADD_POST",
+        addPost
+    } as const),
+    dispatchDeletePost: (id: number) => ({
+        type: "DELETE_POST",
+        id
+    } as const),
+    dispatchOnePost: (onePost: PostType) => ({
+        type: "ONE_POST",
+        onePost
+    } as const),
+    dispatchCreateComment: (newComment: CommentType) => ({
+        type: "NEW_COMMENT",
+        newComment
+    } as const)
+};
