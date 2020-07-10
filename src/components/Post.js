@@ -111,7 +111,7 @@ function Post({get_onePost, post, post_createComment}) {
                                         </div>
                                         <ul className="list-group">
                                             {
-                                                post && post.comments.map(comment => {
+                                                post.comments && post.comments.map(comment => {
                                                     return (
                                                         <li key={comment.id} className="list-group-item">
                                                             {comment.body}
