@@ -3,54 +3,74 @@ import {get_onePost, post_createComment} from "../redux/actions/postAction";
 import {connect} from "react-redux";
 import {useParams} from "react-router-dom";
 import blogImage from "../images/blog.jpg";
+import {PostType} from "../types/types";
+import {AppStateType} from "../redux/reducers/rootReducers";
+import {getPost} from "../redux/selectors";
 
-function Post({get_onePost, post, post_createComment}) {
+type MapStateToPropsType = {
+    post: PostType
+}
 
-    const {id} = useParams();
+type MapDispatchToPropsType = {
+    get_onePost: (id: number) => void,
+    post_createComment: (id: number, body: string) => void,
+}
 
-    const ref = useRef();
+type OwnPropsType = {
 
-    console.log(ref)
+}
+
+type PropsType = MapStateToPropsType & MapDispatchToPropsType & OwnPropsType;
+
+const Post: React.FC<PropsType> = ({post, get_onePost, post_createComment}) => {
+
+    type ParamType = {
+        id: string
+    }
+
+    const {id} = useParams<ParamType>();
+
+    const ref = useRef<HTMLTextAreaElement>(null);
 
     const [data, setData] = useState({
         body: "",
         disabled: true
     });
 
-    function handleChange(e) {
+    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setData({
             ...data,
             body: e.target.value
         })
-    }
+    };
 
-    function handleCreateComment() {
-        post_createComment(id, data.body);
+    const handleCreateComment = () => {
+        post_createComment(+id, data.body);
         setData({
             ...data,
             body: ""
         });
-    }
+    };
 
     let repl = data.body.replace(/^\s+|\s+$|\s+(?=\s)/g, "");
 
-    function handleOnMouseEnter(e) {
+    const handleOnMouseEnter = (e: React.KeyboardEvent) => {
         if(e.key === "Enter") {
             if(repl) {
-                post_createComment(id, data.body);
-                ref.current.blur();
+                post_createComment(+id, data.body);
+                ref.current!.blur();
                 setData({
                     ...data,
                     body: ""
                 });
             } else {
-                ref.current.blur();
+                ref.current!.blur();
             }
         }
-    }
+    };
 
     useEffect(() => {
-        get_onePost(id)
+        get_onePost(+id)
     }, [get_onePost, id]);
 
     useEffect(() => {
@@ -93,10 +113,10 @@ function Post({get_onePost, post, post_createComment}) {
                                             <textarea
                                                 className="form-control"
                                                 id="exampleFormControlTextarea1"
-                                                rows="2"
+                                                rows={2}
                                                 ref={ref}
-                                                onChange={handleChange}
-                                                onKeyPress={handleOnMouseEnter}
+                                                onChange={e => handleChange(e)}
+                                                onKeyPress={e => handleOnMouseEnter(e)}
                                                 value={data.body}
                                             />
                                         </div>
@@ -112,7 +132,7 @@ function Post({get_onePost, post, post_createComment}) {
                                         </div>
                                         <ul className="list-group">
                                             {
-                                                post && post.comments.map(comment => {
+                                                post.comments && post.comments.map(comment => {
                                                     return (
                                                         <li key={comment.id} className="list-group-item">
                                                             {comment.body}
@@ -131,12 +151,12 @@ function Post({get_onePost, post, post_createComment}) {
 
         </main>
     );
-}
+};
 
-function mapStateToProps(state) {
+const mapStateToProps = (state: AppStateType): MapStateToPropsType => {
     return {
-        post: state.data && state.data.post
+        post: getPost(state)
     }
-}
+};
 
-export default connect(mapStateToProps, {get_onePost, post_createComment})(Post);
+export default connect<MapStateToPropsType, MapDispatchToPropsType, OwnPropsType, AppStateType>(mapStateToProps, {get_onePost, post_createComment})(Post);

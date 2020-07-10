@@ -1,21 +1,41 @@
 import React, {useEffect} from 'react';
 import blogImage from "../images/blog.jpg";
 import {connect} from "react-redux";
-import {bindActionCreators} from "redux";
-import {del_deletePost, get_listAllPosts, get_onePost} from "../redux/actions/postAction";
+import {del_deletePost, get_listAllPosts} from "../redux/actions/postAction";
+import {AppStateType} from "../redux/reducers/rootReducers";
+import {PostsType} from "../types/types";
+import * as H from "history";
+import {getPosts} from "../redux/selectors";
 
-function Home({posts, get_listAllPosts, del_deletePost, get_onePost, history}) {
+declare var confirm: (question: string) => boolean;
+
+type MapStateToPropsType = {
+    posts: PostsType
+}
+
+type MapDispatchToPropsType = {
+    get_listAllPosts: () => void,
+    del_deletePost: (id: number) => void
+}
+
+type OwnPropsType = {
+    history: H.History
+}
+
+type PropsType = MapStateToPropsType & MapDispatchToPropsType & OwnPropsType;
+
+const Home: React.FC<PropsType> = ({posts, get_listAllPosts, del_deletePost, history}) => {
 
     useEffect(() => {
         get_listAllPosts()
     }, [get_listAllPosts]);
 
-    function handleDeletePost(id) {
-        const remove = window.confirm("Are you sure delete the post: " + id);
+    const handleDeletePost = (id: number) => {
+        const remove = confirm("Are you sure delete the post: " + id);
         if(remove) {
             del_deletePost(id)
         }
-    }
+    };
 
     return (
         <main role="main">
@@ -30,7 +50,7 @@ function Home({posts, get_listAllPosts, del_deletePost, get_onePost, history}) {
                 <div className="container">
                     <div className="row">
                         {
-                            posts && posts.map(post => {
+                            posts && posts.map((post) => {
                                 return (
                                     <div className="col-md-4" key={post.id}>
                                         <div className="card mb-4 shadow-sm">
@@ -74,21 +94,12 @@ function Home({posts, get_listAllPosts, del_deletePost, get_onePost, history}) {
 
         </main>
     );
-}
+};
 
-function mapStateToProps(state) {
+const mapStateToProps = (state: AppStateType): MapStateToPropsType => {
     return {
-        posts: state.data && state.data.posts
+        posts: getPosts(state)
     }
-}
+};
 
-function mapDispatchToProps(dispatch) {
-    return {
-        get_listAllPosts: bindActionCreators(get_listAllPosts, dispatch),
-        del_deletePost: bindActionCreators(del_deletePost, dispatch),
-        get_onePost: bindActionCreators(get_onePost, dispatch),
-
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default connect<MapStateToPropsType, MapDispatchToPropsType, OwnPropsType, AppStateType>(mapStateToProps, {get_listAllPosts, del_deletePost})(Home);
