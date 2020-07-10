@@ -36,8 +36,8 @@ function Home({posts, get_listAllPosts, del_deletePost, history}) {
                                         <div className="card mb-4 shadow-sm">
                                             <img src={blogImage} alt="" style={{width: "100%", height: "250px"}}/>
                                             <div className="card-body">
-                                                <h5 className="card-title">{post.title}</h5>
-                                                <p className="card-text">{post.body}</p>
+                                                <h5 className="card-title" style={{height: "50px"}}>{post.title}</h5>
+                                                <p className="card-text" style={{height: "150px", overflow: "auto"}}>{post.body}</p>
                                                 <div className="d-flex justify-content-between align-items-center">
                                                     <div className="btn-group">
                                                         <button
@@ -78,7 +78,8 @@ function Home({posts, get_listAllPosts, del_deletePost, history}) {
 
 function mapStateToProps(state) {
     return {
-        posts: getPosts(state)
+        posts: getPosts(state),
+        // posts: state.data && state.data.posts  2 - ой способ
     }
 }
 

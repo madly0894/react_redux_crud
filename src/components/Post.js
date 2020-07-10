@@ -134,7 +134,8 @@ function Post({get_onePost, post, post_createComment}) {
 
 function mapStateToProps(state) {
     return {
-        post: getPost(state)
+        post: getPost(state),
+        // post: state.data && state.data.post  2 - ой способ
     }
 }
 
