@@ -1,10 +1,10 @@
 import React, {useEffect} from 'react';
 import blogImage from "../images/blog.jpg";
 import {connect} from "react-redux";
-import {bindActionCreators} from "redux";
-import {del_deletePost, get_listAllPosts, get_onePost} from "../redux/actions/postAction";
+import {del_deletePost, get_listAllPosts} from "../redux/actions/postAction";
+import {getPosts} from "../redux/selectors";
 
-function Home({posts, get_listAllPosts, del_deletePost, get_onePost, history}) {
+function Home({posts, get_listAllPosts, del_deletePost, history}) {
 
     useEffect(() => {
         get_listAllPosts()
@@ -78,17 +78,8 @@ function Home({posts, get_listAllPosts, del_deletePost, get_onePost, history}) {
 
 function mapStateToProps(state) {
     return {
-        posts: state.data && state.data.posts
+        posts: getPosts(state)
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        get_listAllPosts: bindActionCreators(get_listAllPosts, dispatch),
-        del_deletePost: bindActionCreators(del_deletePost, dispatch),
-        get_onePost: bindActionCreators(get_onePost, dispatch),
-
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default connect(mapStateToProps, {get_listAllPosts, del_deletePost})(Home);

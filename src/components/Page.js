@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from "react-redux";
 import {useParams} from "react-router-dom";
-import {bindActionCreators} from "redux";
 import {post_createPost, put_updatePost} from "../redux/actions/postAction";
 
 function Page({post_createPost, put_updatePost, history, location}) {
@@ -87,11 +86,4 @@ function Page({post_createPost, put_updatePost, history, location}) {
     );
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        post_createPost: bindActionCreators(post_createPost, dispatch),
-        put_updatePost: bindActionCreators(put_updatePost, dispatch),
-    }
-}
-
-export default connect(null, mapDispatchToProps)(Page);
+export default connect(null, {post_createPost, put_updatePost})(Page);

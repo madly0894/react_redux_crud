@@ -1,6 +1,9 @@
 import * as type from "../types";
 
-const initialState = null;
+const initialState = {
+    posts: [],
+    post: {}
+};
 
 export default function (state = initialState, action) {
     switch (action.type) {
@@ -12,8 +15,8 @@ export default function (state = initialState, action) {
         case type.ADD_POST:
             return {
                 ...state,
-                // posts: state.posts.concat(action.post)
-                posts: [...state.posts, action.addPost]
+                posts: [...state.posts, action.addPost],
+                // posts: state.posts.concat(action.post) // 2 - ой способ
             };
         case type.UPDATE_POST:
             const editPost = state.posts.map(post => post.id === action.updatePost.id ? {...post, ...action.updatePost} : post);
@@ -40,7 +43,7 @@ export default function (state = initialState, action) {
                 post: {
                     ...state.post,
                     comments: [...state.post.comments, action.newComment]
-                    // comments: state.post.comments.concat(action.newComment)
+                    // comments: state.post.comments.concat(action.newComment) // 2 - ой способ
                 }
             };
         default:

@@ -3,14 +3,13 @@ import {get_onePost, post_createComment} from "../redux/actions/postAction";
 import {connect} from "react-redux";
 import {useParams} from "react-router-dom";
 import blogImage from "../images/blog.jpg";
+import {getPost} from "../redux/selectors";
 
 function Post({get_onePost, post, post_createComment}) {
 
     const {id} = useParams();
 
     const ref = useRef();
-
-    console.log(ref)
 
     const [data, setData] = useState({
         body: "",
@@ -135,7 +134,7 @@ function Post({get_onePost, post, post_createComment}) {
 
 function mapStateToProps(state) {
     return {
-        post: state.data && state.data.post
+        post: getPost(state)
     }
 }
 
